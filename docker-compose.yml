@@ -1,49 +1,50 @@
 version: "3.8"
 
 services:
-  goapp:
+  golang-app:
+    container_name: golang-kafka
     build:
       context: .
       dockerfile: Dockerfile
-    working_dir: /app
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
-      - redis
-    networks:
-      - golang-kafka
-    restart: always
-  mysql:
-    image: mysql
-    ports:
-      - '${FORWARD_DB_PORT:-3306}:3306'
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: template
-      MYSQL_USER: '${mysql_A_DB_USER}'
-      MYSQL_PASSWORD: '${mysql_A_DB_PASSWORD}'
-    volumes:
-      - mysql_data:/var/lib/mysql
+      - golang-mysql
+      - golang-redis
     networks:
       - golang-kafka
     restart: always
 
-  redis:
+  golang-mysql:
+    container_name: golang-kafka-mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: template
+      MYSQL_USER: worker
+      MYSQL_PASSWORD: worker
+    ports:
+      - "3306:3306"
+    volumes:
+      - golang_kafka_mysql_data:/var/lib/mysql
+    networks:
+      - golang-kafka
+    restart: always
+
+  golang-redis:
+    container_name: golang-kafka-redis
     image: redis:alpine
     ports:
       - "6379:6379"
-    volumes:
-      - redis_data:/data
     networks:
       - golang-kafka
     restart: always
 
 networks:
   golang-kafka:
+    driver: bridge
 
 volumes:
-  mysql_data:
-  redis_data:
+  golang_kafka_mysql_data:

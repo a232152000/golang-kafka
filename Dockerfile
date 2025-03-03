@@ -1,18 +1,18 @@
 FROM golang:latest
 
-# 設置必要的環境變數
+# 設置環境變數
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
-    GOARCH=arm64
+    GOARCH=amd64
 
+# 設置工作目錄
 WORKDIR /app
-
 COPY . .
+RUN go mod tidy
 RUN go mod download
-RUN go build -o ./cmd/worker/main ./cmd/worker
-RUN chmod +x ./cmd/worker/main
-
+RUN cd ./cmd/worker
+RUN go build -o main .
 EXPOSE 8000
 
-CMD ["./cmd/worker/main"]
+CMD ["./main"]

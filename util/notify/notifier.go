@@ -26,3 +26,11 @@ func NewNotifier() error {
 }
 
 func GetNotify() Notifier { return notifier }
+
+func InitNotify() {
+	err := NewNotifier()
+	if err != nil {
+		log.Errorf("Error creating notifier: %v\n", err)
+		return
+	}
+}
