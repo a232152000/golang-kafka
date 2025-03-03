@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"runtime"
+	setting "golang-kafka/config"
 	"time"
 )
 
 func main() {
-	fmt.Printf("Go Version: %s\n", runtime.Version())
+	setting.InitConfig()
 
 	for {
 		time.Sleep(1 * time.Hour)
