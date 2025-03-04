@@ -3,9 +3,9 @@ package notifier
 import (
 	"bytes"
 	"encoding/json"
+	"golang-kafka/util/log"
 	"net/http"
 	"os"
-	"worker/util/log"
 )
 
 type TeamsNotifier struct{}
@@ -16,8 +16,8 @@ type MessageCard struct {
 	ThemeColor string `json:"themeColor"`
 	Summary    string `json:"summary"`
 	Sections   []struct {
-		ActivityTitle    string `json:"activityTitle"`
-		Facts            []struct {
+		ActivityTitle string `json:"activityTitle"`
+		Facts         []struct {
 			Name  string `json:"name"`
 			Value string `json:"value"`
 		} `json:"facts"`
@@ -26,7 +26,7 @@ type MessageCard struct {
 }
 
 func (t *TeamsNotifier) Send(title string, message string) error {
-	msg := formatTamsTemplate(title, message)
+	msg := formatTeamsTemplate(title, message)
 	msgBytes, err := json.Marshal(msg)
 	if err != nil {
 		log.Errorf("Error notify teams json encode message: %v", err)
@@ -53,22 +53,22 @@ func (t *TeamsNotifier) Send(title string, message string) error {
 	return nil
 }
 
-func formatTamsTemplate(title string, message string) MessageCard {
+func formatTeamsTemplate(title string, message string) MessageCard {
 	messageCard := MessageCard{
 		Type:       "MessageCard",
 		Context:    "http://schema.org/extensions",
 		ThemeColor: "d7000b",
 		Summary:    title,
 		Sections: []struct {
-			ActivityTitle    string `json:"activityTitle"`
-			Facts            []struct {
+			ActivityTitle string `json:"activityTitle"`
+			Facts         []struct {
 				Name  string `json:"name"`
 				Value string `json:"value"`
 			} `json:"facts"`
 			Markdown bool `json:"markdown"`
 		}{
 			{
-				ActivityTitle:    title,
+				ActivityTitle: title,
 				Facts: []struct {
 					Name  string `json:"name"`
 					Value string `json:"value"`
