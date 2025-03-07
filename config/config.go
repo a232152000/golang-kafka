@@ -1,11 +1,18 @@
-package setting
+package config
 
 import (
 	"fmt"
 	"github.com/joho/godotenv"
+	"golang-kafka/util/kafka"
 	"golang-kafka/util/log"
 	notifier "golang-kafka/util/notify"
 )
+
+type configKafka struct {
+	BROKERS []string
+}
+
+var KafkaConfig configKafka
 
 func InitConfig() {
 
@@ -15,6 +22,10 @@ func InitConfig() {
 	log.InitLogger()
 	//notify
 	notifier.InitNotify()
+	//Kafka Config
+	kafka.KafkaBaseConfig()
+	//init producer
+	kafka.InitAsyncProducer()
 }
 
 func initEnv() {
