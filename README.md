@@ -32,3 +32,27 @@
 	}()
 
 	wg.Wait()
+
+
+# kafka consumer用法
+
+    ctx, cancel := context.WithCancel(context.Background())
+	var wg sync.WaitGroup
+
+	for i := 0; i < KafkaNumConsumers; i++ {
+		wg.Add(1)
+		go startConsumer(ctx, &wg, i)
+	}
+
+	shutdown := make(chan os.Signal, 1)
+	signal.Notify(shutdown, os.Interrupt, syscall.SIGTERM)
+
+	select {
+	case sig := <-shutdown:
+		log.Errorf("%v", sig)
+		notifier.GetNotify().Send("worker consumer shutdown", "worker consumer shutdown")
+
+		cancel()
+
+		wg.Wait()
+	}
