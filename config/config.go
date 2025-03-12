@@ -1,11 +1,14 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"github.com/joho/godotenv"
+	"golang-kafka/util/database"
 	"golang-kafka/util/kafka"
 	"golang-kafka/util/log"
 	notifier "golang-kafka/util/notify"
+	"golang-kafka/util/redis"
 )
 
 type configKafka struct {
@@ -14,7 +17,7 @@ type configKafka struct {
 
 var KafkaConfig configKafka
 
-func InitConfig() {
+func InitConfig(ctx context.Context) {
 
 	//env
 	initEnv()
@@ -26,6 +29,9 @@ func InitConfig() {
 	kafka.KafkaBaseConfig()
 	//init producer
 	kafka.InitAsyncProducer()
+	//init redis
+	redis.InitRedisClient(ctx)
+
 }
 
 func initEnv() {

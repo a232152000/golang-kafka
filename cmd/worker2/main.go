@@ -6,6 +6,7 @@ import (
 	"golang-kafka/util/kafka"
 	"golang-kafka/util/log"
 	notifier "golang-kafka/util/notify"
+	"golang-kafka/util/redis"
 	"os"
 	"os/signal"
 	"sync"
@@ -18,11 +19,12 @@ const KafkaTopic = "jeff_test"
 const KafkaGroup = "jeff_test"
 
 func main() {
-	defer kafka.CloseProducer()
-
-	setting.InitConfig()
-
 	ctx, cancel := context.WithCancel(context.Background())
+	setting.InitConfig(ctx)
+
+	defer kafka.CloseProducer()
+	defer redis.CloseRedisClient()
+
 	var wg sync.WaitGroup
 
 	for i := 0; i < KafkaNumConsumers; i++ {

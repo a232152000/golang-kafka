@@ -1,0 +1,2 @@
+[ERROR]2025/03/10 15:57:49 /Users/a0017/Desktop/accuhit/golang/golang-kafka/util/redis/redis.go:32: Redis connection was refused: dial tcp: lookup golang-kafka-redis: no such host
+[ERROR]2025/03/10 15:57:49 /Users/a0017/Desktop/accuhit/golang/golang-kafka/cmd/worker3/main.go:29: dial tcp: lookup golang-kafka-redis: no such host

@@ -16,7 +16,7 @@
 
     notifier.GetNotify().Send("title", "message")
 
-# kafka producer用法
+# kafka producer用法(參考worker)
 
     wg := &sync.WaitGroup{} // 使用 WaitGroup 等待 goroutine 完成
 	wg.Add(1)
@@ -34,7 +34,7 @@
 	wg.Wait()
 
 
-# kafka consumer用法
+# kafka consumer用法(參考worker2)
 
     ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
@@ -56,3 +56,27 @@
 
 		wg.Wait()
 	}
+
+
+# redis用法(參考worker3)
+
+    ctx, cancel := context.WithCancel(context.Background())
+	setting.InitConfig(ctx)
+
+	defer cancel()
+	defer kafka.CloseProducer()
+	defer redis.CloseRedisClient()
+
+	redisTest := redis.GetRedisClient()
+	if redisTest == nil {
+		log.Errorf("Redis client is nil, exiting program")
+	}
+
+	err := redisTest.Set(ctx, "testKey", "testValue", 1*time.Hour).Err()
+	if err != nil {
+		fmt.Println("Failed to add testKey key-value pair")
+		log.Errorf("%v", err)
+	}
+
+	val, _ := redisTest.Get(ctx, "testKey").Result()
+	fmt.Println("redis:", val)

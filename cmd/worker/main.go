@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	setting "golang-kafka/config"
 	"golang-kafka/util/kafka"
 	"golang-kafka/util/log"
+	"golang-kafka/util/redis"
 	"strconv"
 	"sync"
 )
@@ -11,9 +13,13 @@ import (
 const KakfaTopic = "jeff_test"
 
 func main() {
-	defer kafka.CloseProducer()
+	ctx, cancel := context.WithCancel(context.Background())
+	setting.InitConfig(ctx)
 
-	setting.InitConfig()
+	defer cancel()
+	defer kafka.CloseProducer()
+	defer redis.CloseRedisClient()
+
 	wg := &sync.WaitGroup{} // 使用 WaitGroup 等待 goroutine 完成
 	wg.Add(1)
 
