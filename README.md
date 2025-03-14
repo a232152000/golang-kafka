@@ -80,3 +80,36 @@
 
 	val, _ := redisTest.Get(ctx, "testKey").Result()
 	fmt.Println("redis:", val)
+
+
+# mysql gorm用法(參考worker4)
+
+    ctx, cancel := context.WithCancel(context.Background())
+	setting.InitConfig(ctx)
+
+	defer cancel()
+	defer kafka.CloseProducer()
+	defer redis.CloseRedisClient()
+	defer database.CloseDB()
+
+	db := database.GetDB()
+
+	//不存在則建立table
+	if err := db.AutoMigrate(&models.User{}); err != nil {
+		log.Errorf("table建立失敗: %v", err)
+	}
+
+	//insert
+	newUser := models.User{Name: "Alice", Email: "alice@example.com", Age: 25}
+	result := db.Create(&newUser)
+	if result.Error != nil {
+		log.Errorf("insert失敗: %v", result.Error)
+	}
+
+	//select
+	var users []models.User
+	db.Find(&users)
+	fmt.Println("select結果:")
+	for _, user := range users {
+		fmt.Printf("ID: %d, Name: %s, Email: %s, Age: %d\n", user.ID, user.Name, user.Email, user.Age)
+	}

@@ -31,7 +31,8 @@ func InitConfig(ctx context.Context) {
 	kafka.InitAsyncProducer()
 	//init redis
 	redis.InitRedisClient(ctx)
-
+	//init database
+	database.InitDatabase()
 }
 
 func initEnv() {
